@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Password Manager</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+
+    <header class="app-header">
+        <div class="brand">
+            <div class="logo">🔐</div>
+            <div>
+                <h1>Password Manager</h1>
+                <p class="subtitle">Keep your credentials safe &amp; organized</p>
+            </div>
+        </div>
+        <span class="badge">Local vault</span>
+    </header>
+
+    <div class="layout">
+
+        <!-- ============ ADD ENTRY ============ -->
+        <section class="card">
+            <h2>Add Entry</h2>
+
+            <div class="field">
+                <label for="website">Website</label>
+                <input id="website" placeholder="website" autocomplete="off">
+            </div>
+
+            <div class="field">
+                <label for="url">URL</label>
+                <input id="url" placeholder="url" autocomplete="off">
+            </div>
+
+            <div class="field">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <input id="password" type="password" placeholder="password" autocomplete="new-password">
+                    <button type="button" class="toggle-btn" id="toggle-password" aria-label="Show password">Show</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" placeholder="email" autocomplete="off">
+            </div>
+
+            <button class="btn-primary" onclick="addPassword()">Add</button>
+        </section>
+
+        <!-- ============ ENTRIES ============ -->
+        <section class="card">
+            <div class="list-head">
+                <h2>Entries</h2>
+                <div class="search-wrap">
+                    <input id="search" type="search" placeholder="Search entries..." autocomplete="off" aria-label="Search entries">
+                </div>
+            </div>
+
+            <div id="list"></div>
+        </section>
+
+    </div>
+</div>
+
+<script>
+    const API = "http://127.0.0.1:8000";
+
+    async function addPassword() {
+        const body = {
+            website: document.getElementById("website").value,
+            url: document.getElementById("url").value,
+            password: document.getElementById("password").value,
+            email: document.getElementById("email").value
+        };
+        await fetch(`${API}/passwords`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        loadPasswords();
+    }
+
+    async function loadPasswords() {
+        const res = await fetch(`${API}/passwords`);
+        const data = await res.json();
+        document.getElementById("list").innerHTML = data
+            .map(row => `<p>${row[1]} — (${row[2]}) — ${row[4]}</p>`)
+            .join("");
+    }
+
+    loadPasswords();
+</script>
+
+<script src="script.js"></script>
+</body>
+</html>
