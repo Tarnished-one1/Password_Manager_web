@@ -1,0 +1,1 @@
+A web based Password Manager built with python, fastapi, and sqlite3 as the database
